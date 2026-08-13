@@ -295,7 +295,7 @@ Module.register("MMM-Graphical-METAR-TAF", {
     const side = relative <= 0 ? "left" : "right";
     const level = this.crosswindLevel(parts.cross);
     const ceiling = (forecast.clouds || []).find((cloud) => ["BKN", "OVC", "VV"].includes(cloud.cover));
-    const clouds = (forecast.clouds || []).map((cloud) => `<div class="${this.escape(cloud.cover.toLowerCase())}">${this.cloudMarkup(this.cloudCount(cloud.cover, true))}<span>${this.escape(cloud.cover)} ${Number(cloud.base || 0).toLocaleString()} ft</span></div>`).join("");
+    const clouds = (forecast.clouds || []).slice().sort((a, b) => Number(b.base || 0) - Number(a.base || 0)).map((cloud) => `<div class="${this.escape(cloud.cover.toLowerCase())}">${this.cloudMarkup(this.cloudCount(cloud.cover, true))}<span>${this.escape(cloud.cover)} ${Number(cloud.base || 0).toLocaleString()} ft</span></div>`).join("");
     const from = this.time(forecast.timeFrom, false);
     const to = this.time(forecast.timeTo, false).replace(/^\w+\s/, "");
     return `<article class="gmt-forecast-card ${forecast.fcstChange === "TEMPO" ? "temporary" : ""}">
@@ -324,7 +324,7 @@ Module.register("MMM-Graphical-METAR-TAF", {
     const topCloud = (metar.clouds || []).slice(-1)[0];
     const coverNames = { CLR: "Clear", SKC: "Clear", FEW: "Few", SCT: "Scattered", BKN: "Broken", OVC: "Overcast", VV: "Vertical visibility" };
     const runways = this.runwayRows(airport.runways, direction, metar.wspd || 0);
-    const clouds = (metar.clouds || []).map((cloud) => `<div class="gmt-cloud-layer ${this.escape(cloud.cover.toLowerCase())}" style="bottom:${58 + Math.min(34, ((cloud.base || 0) / 30000) * 34)}%"><div>${this.cloudMarkup(this.cloudCount(cloud.cover, false))}</div><b>${this.escape(cloud.cover)} ${Number(cloud.base || 0).toLocaleString()} ft</b></div>`).join("");
+    const clouds = (metar.clouds || []).slice().sort((a, b) => Number(b.base || 0) - Number(a.base || 0)).map((cloud) => `<div class="gmt-cloud-layer ${this.escape(cloud.cover.toLowerCase())}" style="bottom:${58 + Math.min(34, ((cloud.base || 0) / 30000) * 34)}%"><div>${this.cloudMarkup(this.cloudCount(cloud.cover, false))}</div><b>${this.escape(cloud.cover)} ${Number(cloud.base || 0).toLocaleString()} ft</b></div>`).join("");
     const age = Math.max(0, Math.floor((Date.now() - new Date(metar.reportTime).getTime()) / 60000));
     const forecasts = taf && taf.fcsts ? taf.fcsts.map((forecast, index) => this.forecastCard(forecast, index, airport.runways)).join("") : '<div class="gmt-message">No current TAF is published.</div>';
     const officialLink = this.config.showOfficialLinks ? `<a href="https://aviationweather.gov/data/taf/?ids=${encodeURIComponent(metar.icaoId)}&metar=0&taf=1" target="_blank">Official TAF ↗</a>` : "";

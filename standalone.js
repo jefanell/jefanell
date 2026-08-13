@@ -20,6 +20,7 @@
       const response = await fetch("/api/weather", { cache: "no-store" });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Weather data is unavailable.");
+      if (payload.webConfig) Object.assign(dashboard.config, payload.webConfig);
       dashboard.weather = payload;
       dashboard.error = null;
       render();

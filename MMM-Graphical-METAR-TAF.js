@@ -6,6 +6,7 @@ Module.register("MMM-Graphical-METAR-TAF", {
     updateInterval: 5 * 60 * 1000,
     animationSpeed: 800,
     showOfficialLinks: false,
+    showTaf: true,
     width: "1920px",
     height: "1080px",
     webServerEnabled: true,
@@ -23,7 +24,11 @@ Module.register("MMM-Graphical-METAR-TAF", {
     this.fitSettleTimers = [];
     this.fitObserver = null;
     this.observedViewport = null;
-    this.resizeHandler = () => this.scheduleFit();
+    this.resizeHandler = () => {
+      const viewport = document.getElementById(`gmt-viewport-${this.identifier}`);
+      if (viewport) delete viewport.dataset.maxHeight;
+      this.scheduleFit();
+    };
     this.visibilityHandler = () => {
       if (!document.hidden) this.scheduleInitialFits();
     };
@@ -94,7 +99,8 @@ Module.register("MMM-Graphical-METAR-TAF", {
     if (!viewport || !stage) return;
     this.observeDashboard(viewport, stage);
     const viewportWidth = viewport.clientWidth;
-    const viewportHeight = viewport.clientHeight;
+    const viewportHeight = Number(viewport.dataset.maxHeight) || viewport.clientHeight;
+    if (!viewport.dataset.maxHeight && viewportHeight) viewport.dataset.maxHeight = String(viewportHeight);
     if (!viewportWidth || !viewportHeight) {
       this.fitTimer = setTimeout(() => this.fitDashboard(), 100);
       return;
@@ -109,8 +115,9 @@ Module.register("MMM-Graphical-METAR-TAF", {
     const renderedWidth = designWidth * scale;
     const renderedHeight = designHeight * scale;
     stage.style.left = `${Math.max(0, (viewportWidth - renderedWidth) / 2)}px`;
-    stage.style.top = `${Math.max(0, (viewportHeight - renderedHeight) / 2)}px`;
+    stage.style.top = "0px";
     stage.style.transform = `scale(${scale})`;
+    viewport.style.height = `${renderedHeight}px`;
     viewport.dataset.scale = String(scale);
   },
 
@@ -156,6 +163,7 @@ Module.register("MMM-Graphical-METAR-TAF", {
       identifier: this.identifier,
       airport: this.station(this.config.airport),
       updateInterval: Math.max(60 * 1000, Number(this.config.updateInterval) || 5 * 60 * 1000),
+      showTaf: this.config.showTaf !== false,
       webServerEnabled: this.config.webServerEnabled !== false,
       webServerAddress: String(this.config.webServerAddress || "0.0.0.0"),
       webServerPort: Number(this.config.webServerPort) || 3000,
@@ -270,9 +278,8 @@ Module.register("MMM-Graphical-METAR-TAF", {
       <span class="gmt-orientation">Runway ${this.escape(row.id)}</span>
       ${speed > 0 ? `<div class="gmt-wind ${level}" style="transform:rotate(${angle}deg)">${this.chevrons()}</div>` : ""}
       <div class="gmt-runway"><i class="gmt-centerline"></i><b>${this.escape(row.end.name)}</b>${this.threshold()}</div>
-      <strong class="gmt-crosswind ${level} ${side}"><span>${row.cross} kt</span><span>x-wind</span></strong>
+      <strong class="gmt-crosswind ${level} ${side}"><span><b>${row.cross} kt</b><small>x-wind</small></span><span><b>${Math.abs(row.head)} kt</b><small>${row.head >= 0 ? "headwind" : "tailwind"}</small></span></strong>
       ${windsock ? this.windsock(speed, angle, side === "left" ? "right" : "left") : ""}
-      <footer>${row.head >= 0 ? `${row.head} kt headwind` : `${Math.abs(row.head)} kt tailwind`}</footer>
     </article>`;
   },
 
@@ -333,6 +340,6 @@ Module.register("MMM-Graphical-METAR-TAF", {
         <article><strong>${(Number(metar.altim) / 33.8639).toFixed(2)} inHg</strong><span>Altimeter</span></article>
       </section>
       <section class="gmt-current"><header><div><span>Current METAR visualization</span><strong>${typeof metar.wdir === "number" ? `${metar.wdir}°` : "VRB"} at ${metar.wspd || 0}${metar.wgst ? `G${metar.wgst}` : ""} kt</strong></div><div><span>Visibility</span><strong>${this.escape(metar.visib)} mi</strong></div><div><span>Ceiling</span><strong>${ceiling ? `${Number(ceiling.base).toLocaleString()} ft` : "Unlimited"}</strong></div></header><div class="gmt-current-scene">${clouds}<div class="gmt-runway-grid">${runways.map((row) => this.runwayScene(row, direction, metar.wspd || 0, true)).join("")}</div></div></section>
-      <section class="gmt-taf"><header><div><h2>${this.escape(metar.icaoId)} forecast periods</h2><span>${taf ? `Issued ${this.time(taf.issueTime, true)} Z` : "No current TAF available"}</span></div>${officialLink}</header><div class="gmt-forecast-grid">${forecasts}</div></section>`;
+      ${this.config.showTaf !== false ? `<section class="gmt-taf"><header><div><h2>${this.escape(metar.icaoId)} forecast periods</h2><span>${taf ? `Issued ${this.time(taf.issueTime, true)} Z` : "No current TAF available"}</span></div>${officialLink}</header><div class="gmt-forecast-grid">${forecasts}</div></section>` : ""}`;
   },
 });

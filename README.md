@@ -24,6 +24,7 @@ Add this entry to the `modules` array in `~/MagicMirror/config/config.js`:
     updateInterval: 5 * 60 * 1000,
     animationSpeed: 800,
     showOfficialLinks: false,
+    showTaf: true,
     width: "1920px",
     height: "1080px",
     webServerEnabled: true,
@@ -41,6 +42,7 @@ Add this entry to the `modules` array in `~/MagicMirror/config/config.js`:
 | `updateInterval` | `300000` | Refresh interval in milliseconds; minimum one minute. |
 | `animationSpeed` | `800` | MagicMirror DOM update animation in milliseconds. |
 | `showOfficialLinks` | `false` | Show a link to the official TAF page. |
+| `showTaf` | `true` | Show the complete TAF forecast section. Set to `false` for a METAR-only display. |
 | `width` | `"1920px"` | Exact dashboard viewport width. Accepts pixels or a CSS length such as `"80vw"` or `"100%"`. |
 | `height` | `"1080px"` | Exact dashboard viewport height. |
 | `webServerEnabled` | `true` | Serve the same dashboard as a separate web page for LAN devices. |

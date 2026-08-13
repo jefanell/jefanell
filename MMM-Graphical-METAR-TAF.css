@@ -125,3 +125,11 @@
   .gmt-current>header{grid-template-columns:1fr 1fr}.gmt-current>header>div:first-child{grid-column:1/-1;border-bottom:1px solid #34393b}.gmt-current-scene{height:400px}.gmt-cloud-layer i{height:12px}.gmt-cloud-layer i:nth-child(3n+2){height:18px}.gmt-cloud-layer b{font-size:8px}.gmt-runway{width:230px;height:215px}.gmt-runway>b{bottom:56px;font-size:18px}.gmt-centerline{bottom:91px}.gmt-crosswind{top:70%;padding:5px 6px;font-size:12px}.gmt-crosswind.left{left:calc(25% - 31px)}.gmt-crosswind.right{right:calc(25% - 31px)}.gmt-wind i{width:14px;height:14px;flex-basis:14px;border-width:4px}.gmt-windsock.left{left:12%}.gmt-windsock.right{right:12%}.gmt-windsock-vane{width:32px;height:38px}.gmt-windsock-pole{width:4px;height:55px}.gmt-runway-view>footer{display:none}
   .gmt-taf h2{font-size:21px}.gmt-forecast-grid{grid-template-columns:1fr}
 }
+
+/* Larger current-METAR labels and a compact side-by-side conditions header. */
+.gmt-current>header>div { display:flex; align-items:center; justify-content:space-between; gap:18px; padding-top:9px; padding-bottom:9px; }
+.gmt-current>header span { margin-bottom:0; white-space:nowrap; }
+.gmt-current>header strong { font-size:32px; line-height:1; white-space:nowrap; }
+.gmt-orientation { padding:10px 16px; border-radius:10px; font-size:30px; line-height:1; }
+.gmt-runway>b { font-size:37.5px; }
+@media(max-width:650px) { .gmt-current>header>div{gap:9px;padding:8px 10px}.gmt-current>header strong{font-size:26px}.gmt-orientation{padding:8px 12px;font-size:27px}.gmt-runway>b{font-size:27px} }

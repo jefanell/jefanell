@@ -16,6 +16,9 @@ Module.register("MMM-Graphical-METAR-TAF", {
     this.weather = null;
     this.error = null;
     this.loaded = false;
+    this.fitTimer = null;
+    this.resizeHandler = () => this.scheduleFit();
+    if (typeof window !== "undefined") window.addEventListener("resize", this.resizeHandler);
     this.sendConfiguration();
   },
 
@@ -30,6 +33,7 @@ Module.register("MMM-Graphical-METAR-TAF", {
   getDom() {
     const wrapper = document.createElement("div");
     wrapper.className = "graphical-metar-taf";
+    wrapper.id = `gmt-viewport-${this.identifier}`;
     wrapper.style.width = this.dimension(this.config.width, "1920px");
     wrapper.style.height = this.dimension(this.config.height, "1080px");
 
@@ -43,8 +47,39 @@ Module.register("MMM-Graphical-METAR-TAF", {
       return wrapper;
     }
 
-    wrapper.innerHTML = this.renderDashboard(this.weather);
+    wrapper.innerHTML = `<div class="gmt-scale-stage">${this.renderDashboard(this.weather)}</div>`;
+    this.scheduleFit();
     return wrapper;
+  },
+
+  scheduleFit() {
+    if (this.fitTimer) clearTimeout(this.fitTimer);
+    this.fitTimer = setTimeout(() => this.fitDashboard(), 30);
+  },
+
+  fitDashboard() {
+    const viewport = document.getElementById(`gmt-viewport-${this.identifier}`);
+    const stage = viewport && viewport.querySelector(".gmt-scale-stage");
+    if (!viewport || !stage) return;
+    const viewportWidth = viewport.clientWidth;
+    const viewportHeight = viewport.clientHeight;
+    if (!viewportWidth || !viewportHeight) {
+      this.fitTimer = setTimeout(() => this.fitDashboard(), 100);
+      return;
+    }
+
+    stage.style.transform = "none";
+    stage.style.left = "0px";
+    stage.style.top = "0px";
+    const designWidth = 1920;
+    const designHeight = Math.max(1, stage.scrollHeight);
+    const scale = Math.min(viewportWidth / designWidth, viewportHeight / designHeight);
+    const renderedWidth = designWidth * scale;
+    const renderedHeight = designHeight * scale;
+    stage.style.left = `${Math.max(0, (viewportWidth - renderedWidth) / 2)}px`;
+    stage.style.top = `${Math.max(0, (viewportHeight - renderedHeight) / 2)}px`;
+    stage.style.transform = `scale(${scale})`;
+    viewport.dataset.scale = String(scale);
   },
 
   socketNotificationReceived(notification, payload) {

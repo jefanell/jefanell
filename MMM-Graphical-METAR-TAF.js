@@ -304,7 +304,7 @@ Module.register("MMM-Graphical-METAR-TAF", {
         <div class="gmt-forecast-clouds">${clouds}</div>
         ${direction !== null && speed > 0 ? `<div class="gmt-forecast-wind ${level}" style="transform:rotate(${direction - end.heading + 90}deg)">${this.chevrons()}</div>` : ""}
         <div class="gmt-forecast-runway"><i class="gmt-centerline"></i><b>${this.escape(end.name)}</b>${this.threshold()}</div>
-        ${direction !== null ? `<strong class="gmt-forecast-crosswind ${level} ${side}"><span>${parts.cross} kt</span><span>x-wind</span></strong>` : ""}
+        ${direction !== null ? `<strong class="gmt-forecast-crosswind ${level} ${side}"><span><b>${parts.cross} kt</b><small>x-wind</small></span><span><b>${Math.abs(parts.head)} kt</b><small>${parts.head >= 0 ? "headwind" : "tailwind"}</small></span></strong>` : ""}
       </div>
       <div class="gmt-forecast-stats">
         <div><span>Wind</span><strong>${direction === null ? "VRB" : `${direction}°`} · ${speed}${forecast.wgst ? `G${forecast.wgst}` : ""} kt</strong></div>

@@ -152,3 +152,24 @@
 .gmt-forecast-clouds span { z-index:8; padding:5px 8px; font-size:16px; }.gmt-forecast-crosswind { font-size:28px; }
 .gmt-forecast-stats span { font-size:16px; }.gmt-forecast-stats strong { font-size:20px; }.gmt-forecast-card>footer { font-size:18px; }.gmt-forecast-card>footer strong { font-size:22px; }.gmt-forecast-card>footer em { font-size:18px; }
 @media(max-width:650px) { .gmt-crosswind{min-width:230px}.gmt-crosswind>span{padding:10px 12px}.gmt-cloud-layer b{font-size:16px}.gmt-category{font-size:20px}.gmt-forecast-card>header time{font-size:20px}.gmt-forecast-card>header strong{font-size:18px}.gmt-forecast-clouds span{font-size:14px}.gmt-forecast-crosswind{font-size:24px}.gmt-forecast-stats span{font-size:14px}.gmt-forecast-stats strong{font-size:18px}.gmt-forecast-card>footer{font-size:16px}.gmt-forecast-card>footer strong{font-size:20px} }
+
+/* Keep altitude callouts cloud-free and use equal split component badges everywhere. */
+.gmt-current>header span { font-size:32px; }
+.gmt-cloud-layer>div { padding-right:250px; }.gmt-cloud-layer b { min-width:225px; text-align:center; }
+.gmt-crosswind>span:last-child { margin:0; font-size:inherit; }.gmt-crosswind>span small:last-child { font-size:.58em; }
+.gmt-forecast-grid { grid-template-columns:repeat(auto-fit,minmax(360px,1fr)); }.gmt-forecast-scene { height:220px; }.gmt-forecast-runway { bottom:68px; }
+.gmt-forecast-clouds>div { padding-right:150px; }.gmt-forecast-clouds span { min-width:140px; text-align:center; }
+.gmt-forecast-crosswind { left:8px!important; right:8px!important; bottom:6px; display:flex; min-width:0; flex-direction:row; padding:0; }
+.gmt-forecast-crosswind>span { display:flex; min-width:0; flex:1; flex-direction:column; align-items:center; padding:8px 10px; }.gmt-forecast-crosswind>span+span { border-left:2px solid currentColor; }
+.gmt-forecast-crosswind>span:last-child { margin:0; font-size:inherit; }.gmt-forecast-crosswind b { font-size:1em; }.gmt-forecast-crosswind small { margin-top:3px; font-size:.58em; font-weight:400; }
+@media(max-width:650px) { .gmt-current>header span{font-size:32px}.gmt-cloud-layer>div{padding-right:190px}.gmt-cloud-layer b{min-width:175px}.gmt-forecast-grid{grid-template-columns:1fr}.gmt-forecast-clouds>div{padding-right:130px}.gmt-forecast-clouds span{min-width:120px} }
+
+/* Center the METAR component badge in the clear side area; stack when narrow. */
+.gmt-runway-view { container-type:inline-size; }
+.gmt-crosswind.left { left:25%; right:auto; transform:translate(-50%,-50%); }
+.gmt-crosswind.right { right:25%; left:auto; transform:translate(50%,-50%); }
+@container (max-width:935px) {
+  .gmt-crosswind { min-width:150px; flex-direction:column; }
+  .gmt-crosswind>span { padding:10px 14px; }
+  .gmt-crosswind>span+span { border-top:3px solid currentColor; border-left:0; }
+}

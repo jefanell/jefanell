@@ -173,3 +173,17 @@
   .gmt-crosswind>span { padding:10px 14px; }
   .gmt-crosswind>span+span { border-top:3px solid currentColor; border-left:0; }
 }
+
+/* Compact TAF heading and a larger runway with a smaller vertical wind badge. */
+.gmt-taf>header { align-items:center; }
+.gmt-taf h2 { margin:0; }
+.gmt-taf>header a { margin-left:auto; }
+.gmt-taf>header span { order:3; margin-left:10px; white-space:nowrap; text-align:right; }
+.gmt-forecast-runway { bottom:35px; width:180px; height:140px; }
+.gmt-forecast-runway>.gmt-centerline { top:10px; bottom:64px; width:4px; background:repeating-linear-gradient(#fff 0 12px,transparent 12px 20px); }
+.gmt-forecast-runway>b { bottom:36px; font-size:18px; }
+.gmt-forecast-crosswind { top:50%; right:auto!important; bottom:auto; left:8px!important; width:104px; min-width:0; flex-direction:column; transform:translateY(-50%); font-size:14px; }
+.gmt-forecast-crosswind.right { right:8px!important; left:auto!important; }
+.gmt-forecast-crosswind>span { width:100%; padding:5px 6px; }
+.gmt-forecast-crosswind>span+span { border-top:2px solid currentColor; border-left:0; }
+@media(max-width:650px) { .gmt-taf>header{flex-wrap:wrap}.gmt-taf>header span{margin-left:auto}.gmt-forecast-crosswind{font-size:12px} }

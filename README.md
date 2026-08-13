@@ -38,10 +38,12 @@ Add this entry to the `modules` array in `~/MagicMirror/config/config.js`:
 | `updateInterval` | `300000` | Refresh interval in milliseconds; minimum one minute. |
 | `animationSpeed` | `800` | MagicMirror DOM update animation in milliseconds. |
 | `showOfficialLinks` | `false` | Show a link to the official TAF page. |
-| `width` | `"1920px"` | Exact dashboard width. Accepts a number of pixels or a CSS length such as `"80vw"` or `"100%"`. |
-| `height` | `"1080px"` | Exact dashboard height. Content outside this boundary is clipped. |
+| `width` | `"1920px"` | Exact dashboard viewport width. Accepts pixels or a CSS length such as `"80vw"` or `"100%"`. |
+| `height` | `"1080px"` | Exact dashboard viewport height. |
 
 The display includes current flight category, temperature, wind, visibility, ceiling, altimeter, runway-relative headwind/crosswind components, four-section windsocks, cloud layers, and graphical TAF periods. Parallel runways are consolidated into one orientation.
+
+The complete dashboard is rendered on a high-resolution canvas and uniformly scaled to the largest size that fits within both `width` and `height`. Nothing is cropped, and the aspect ratio is preserved. Scaling is recalculated after each weather update and whenever the MagicMirror browser is resized.
 
 ## Update
 

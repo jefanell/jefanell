@@ -4,10 +4,20 @@ A MagicMirror² wrapper for the graphical METAR/TAF runway dashboard. The module
 
 ## Install
 
-Copy `MMM-MetarRunway` into the MagicMirror `modules` directory:
+Clone the module directly into the MagicMirror `modules` directory:
 
 ```bash
-cp -R MMM-MetarRunway ~/MagicMirror/modules/
+cd ~/MagicMirror/modules
+git clone https://github.com/jefanell/jefanell.git MMM-MetarRunway
+```
+
+Clone URL: [`https://github.com/jefanell/jefanell.git`](https://github.com/jefanell/jefanell.git)
+
+To download future updates:
+
+```bash
+cd ~/MagicMirror/modules/MMM-MetarRunway
+git pull
 ```
 
 Keep the dashboard web server running on the same device as MagicMirror at `http://localhost:3000/`. If it runs on another device, set `appUrl` to that device's LAN URL.

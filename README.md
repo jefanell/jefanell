@@ -44,6 +44,7 @@ Add this entry to the `modules` array in `~/MagicMirror/config/config.js`:
 The display includes current flight category, temperature, wind, visibility, ceiling, altimeter, runway-relative headwind/crosswind components, four-section windsocks, cloud layers, and graphical TAF periods. Parallel runways are consolidated into one orientation.
 
 The complete dashboard is rendered on a high-resolution canvas and uniformly scaled to the largest size that fits within both `width` and `height`. Nothing is cropped, and the aspect ratio is preserved. Scaling is recalculated after each weather update and whenever the MagicMirror browser is resized.
+During initial MagicMirror startup, the module continues measuring while regions, fonts, and animations settle. It also watches its container for later layout changes, so manual browser zooming should not be necessary.
 
 ## Update
 

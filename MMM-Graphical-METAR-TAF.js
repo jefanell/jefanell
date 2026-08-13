@@ -17,8 +17,20 @@ Module.register("MMM-Graphical-METAR-TAF", {
     this.error = null;
     this.loaded = false;
     this.fitTimer = null;
+    this.fitSettleTimers = [];
+    this.fitObserver = null;
+    this.observedViewport = null;
     this.resizeHandler = () => this.scheduleFit();
+    this.visibilityHandler = () => {
+      if (!document.hidden) this.scheduleInitialFits();
+    };
     if (typeof window !== "undefined") window.addEventListener("resize", this.resizeHandler);
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", this.visibilityHandler);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => this.scheduleInitialFits());
+      }
+    }
     this.sendConfiguration();
   },
 
@@ -48,7 +60,7 @@ Module.register("MMM-Graphical-METAR-TAF", {
     }
 
     wrapper.innerHTML = `<div class="gmt-scale-stage">${this.renderDashboard(this.weather)}</div>`;
-    this.scheduleFit();
+    this.scheduleInitialFits();
     return wrapper;
   },
 
@@ -57,10 +69,27 @@ Module.register("MMM-Graphical-METAR-TAF", {
     this.fitTimer = setTimeout(() => this.fitDashboard(), 30);
   },
 
+  scheduleInitialFits() {
+    this.fitSettleTimers.forEach((timer) => clearTimeout(timer));
+    this.fitSettleTimers = [30, 100, 250, 600, 1100, 2000].map((delay) => (
+      setTimeout(() => this.fitDashboard(), delay)
+    ));
+  },
+
+  observeDashboard(viewport, stage) {
+    if (typeof ResizeObserver === "undefined" || this.observedViewport === viewport) return;
+    if (this.fitObserver) this.fitObserver.disconnect();
+    this.fitObserver = new ResizeObserver(() => this.scheduleFit());
+    this.fitObserver.observe(viewport);
+    this.fitObserver.observe(stage);
+    this.observedViewport = viewport;
+  },
+
   fitDashboard() {
     const viewport = document.getElementById(`gmt-viewport-${this.identifier}`);
     const stage = viewport && viewport.querySelector(".gmt-scale-stage");
     if (!viewport || !stage) return;
+    this.observeDashboard(viewport, stage);
     const viewportWidth = viewport.clientWidth;
     const viewportHeight = viewport.clientHeight;
     if (!viewportWidth || !viewportHeight) {
@@ -97,7 +126,10 @@ Module.register("MMM-Graphical-METAR-TAF", {
   },
 
   notificationReceived(notification, payload) {
-    if (notification === "DOM_OBJECTS_CREATED") this.sendConfiguration();
+    if (notification === "DOM_OBJECTS_CREATED") {
+      this.sendConfiguration();
+      this.scheduleInitialFits();
+    }
     if (notification === "MMM_GRAPHICAL_METAR_TAF_REFRESH") {
       this.sendSocketNotification("GMT_REFRESH", { identifier: this.identifier });
     }
@@ -105,6 +137,15 @@ Module.register("MMM-Graphical-METAR-TAF", {
       this.config.airport = this.station(payload);
       this.sendConfiguration();
     }
+  },
+
+  suspend() {
+    if (this.fitObserver) this.fitObserver.disconnect();
+    this.observedViewport = null;
+  },
+
+  resume() {
+    this.scheduleInitialFits();
   },
 
   sendConfiguration() {

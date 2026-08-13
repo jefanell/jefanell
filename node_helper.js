@@ -1,5 +1,8 @@
 const NodeHelper = require("node_helper");
 const https = require("https");
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
 
 const DEFAULT_RUNWAYS = [
   { id: "09R/27L", ends: [{ name: "09R", heading: 88 }, { name: "27L", heading: 268 }], length: 6521 },
@@ -10,11 +13,15 @@ const DEFAULT_RUNWAYS = [
 module.exports = NodeHelper.create({
   start() {
     this.instances = new Map();
+    this.webServer = null;
+    this.webServerSettings = null;
   },
 
   stop() {
     this.instances.forEach((instance) => clearInterval(instance.timer));
     this.instances.clear();
+    if (this.webServer) this.webServer.close();
+    this.webServer = null;
   },
 
   socketNotificationReceived(notification, payload) {
@@ -30,10 +37,84 @@ module.exports = NodeHelper.create({
       airport: this.station(payload.airport),
       interval: Math.max(60 * 1000, Number(payload.updateInterval) || 5 * 60 * 1000),
       timer: null,
+      latest: previous ? previous.latest : null,
     };
     instance.timer = setInterval(() => this.refresh(payload.identifier), instance.interval);
     this.instances.set(payload.identifier, instance);
+    if (payload.webServerEnabled !== false) {
+      this.startWebServer(payload.webServerAddress, payload.webServerPort);
+    } else if (this.webServer) {
+      this.webServer.close();
+      this.webServer = null;
+      this.webServerSettings = null;
+    }
     this.refresh(payload.identifier);
+  },
+
+  startWebServer(address, port) {
+    const host = String(address || "0.0.0.0");
+    const listenPort = Math.min(65535, Math.max(1, Number(port) || 3000));
+    const settings = `${host}:${listenPort}`;
+    if (this.webServer && this.webServerSettings === settings) return;
+    if (this.webServer) {
+      this.webServer.close(() => {
+        this.webServer = null;
+        this.createWebServer(host, listenPort);
+      });
+      return;
+    }
+    this.createWebServer(host, listenPort);
+  },
+
+  createWebServer(host, port) {
+    const files = {
+      "/": ["standalone.html", "text/html; charset=utf-8"],
+      "/index.html": ["standalone.html", "text/html; charset=utf-8"],
+      "/standalone.js": ["standalone.js", "text/javascript; charset=utf-8"],
+      "/MMM-Graphical-METAR-TAF.js": ["MMM-Graphical-METAR-TAF.js", "text/javascript; charset=utf-8"],
+      "/MMM-Graphical-METAR-TAF.css": ["MMM-Graphical-METAR-TAF.css", "text/css; charset=utf-8"],
+    };
+    this.webServer = http.createServer((request, response) => {
+      const url = new URL(request.url, `http://${request.headers.host || "localhost"}`);
+      if (url.pathname === "/api/weather") {
+        const requestedAirport = url.searchParams.get("airport");
+        const instance = Array.from(this.instances.values()).find((item) => (
+          !requestedAirport || item.airport === this.station(requestedAirport)
+        ));
+        if (!instance || !instance.latest) {
+          response.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+          response.end(JSON.stringify({ error: "Weather data is still loading." }));
+          return;
+        }
+        response.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+        response.end(JSON.stringify(instance.latest));
+        return;
+      }
+      const asset = files[url.pathname];
+      if (!asset) {
+        response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+        response.end("Not found");
+        return;
+      }
+      fs.readFile(path.join(__dirname, asset[0]), (error, contents) => {
+        if (error) {
+          response.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+          response.end("Unable to load the METAR dashboard.");
+          return;
+        }
+        response.writeHead(200, { "Content-Type": asset[1], "Cache-Control": "no-cache" });
+        response.end(contents);
+      });
+    });
+    this.webServer.on("error", (error) => {
+      console.error(`[MMM-Graphical-METAR-TAF] Standalone server failed on ${host}:${port}: ${error.message}`);
+      this.webServer = null;
+      this.webServerSettings = null;
+    });
+    this.webServer.listen(port, host, () => {
+      this.webServerSettings = `${host}:${port}`;
+      console.log(`[MMM-Graphical-METAR-TAF] Standalone dashboard listening on http://${host}:${port}`);
+    });
   },
 
   station(value) {
@@ -100,7 +181,8 @@ module.exports = NodeHelper.create({
       ]);
       const airport = this.airportInfo(airportRecord, instance.airport);
       if (!airport.runways.length) throw new Error(`No runway information was returned for ${instance.airport}`);
-      this.sendSocketNotification("GMT_WEATHER", { identifier, metar, taf, airport, updatedAt: Date.now() });
+      instance.latest = { identifier, metar, taf, airport, updatedAt: Date.now() };
+      this.sendSocketNotification("GMT_WEATHER", instance.latest);
     } catch (error) {
       this.sendSocketNotification("GMT_ERROR", { identifier, message: error instanceof Error ? error.message : "Unable to retrieve aviation weather." });
     } finally {

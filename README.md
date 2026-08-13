@@ -1,26 +1,15 @@
 # MMM-Graphical-METAR-TAF
 
-A MagicMirror² wrapper for the graphical METAR/TAF runway dashboard. The module and local browser preview share the same web app, so visual and calculation changes never need to be duplicated.
+A standalone MagicMirror² module that fetches current METAR, TAF, airport, and runway data from AviationWeather.gov and renders graphical runway-relative weather. No separate web server, API key, iframe, or npm install is required.
 
 ## Install
-
-Clone the module directly into the MagicMirror `modules` directory:
 
 ```bash
 cd ~/MagicMirror/modules
 git clone https://github.com/jefanell/jefanell.git MMM-Graphical-METAR-TAF
 ```
 
-Clone URL: [`https://github.com/jefanell/jefanell.git`](https://github.com/jefanell/jefanell.git)
-
-To download future updates:
-
-```bash
-cd ~/MagicMirror/modules/MMM-Graphical-METAR-TAF
-git pull
-```
-
-Keep the dashboard web server running on the same device as MagicMirror at `http://localhost:3000/`. If it runs on another device, set `appUrl` to that device's LAN URL.
+Restart MagicMirror after installing the module.
 
 ## config.js
 
@@ -32,19 +21,33 @@ Add this entry to the `modules` array in `~/MagicMirror/config/config.js`:
   position: "fullscreen_above",
   config: {
     airport: "KPTK",
-    appUrl: "http://localhost:3000/",
-    width: "1920px",
-    height: "1080px"
+    updateInterval: 5 * 60 * 1000,
+    animationSpeed: 800,
+    showOfficialLinks: false
   }
 }
 ```
 
-Change `airport` to any 3- or 4-character airport identifier supported by AviationWeather.gov. The dashboard loads that airport's METAR, TAF, name, runway alignments, and runway lengths.
+### Options
 
-## Local previews
+| Option | Default | Description |
+| --- | --- | --- |
+| `airport` | `"KPTK"` | Three- or four-character airport identifier. |
+| `updateInterval` | `300000` | Refresh interval in milliseconds; minimum one minute. |
+| `animationSpeed` | `800` | MagicMirror DOM update animation in milliseconds. |
+| `showOfficialLinks` | `false` | Show a link to the official TAF page. |
 
-- Standard editable page: `http://localhost:3000/`
-- Mirror presentation: `http://localhost:3000/mirror?airport=KPTK`
-- Another airport: `http://localhost:3000/mirror?airport=KDTW`
+The display includes current flight category, temperature, wind, visibility, ceiling, altimeter, runway-relative headwind/crosswind components, four-section windsocks, cloud layers, and graphical TAF periods. Parallel runways are consolidated into one orientation.
 
-The standard page retains the airport picker. Mirror mode hides the picker because its value comes from `config.js`.
+## Update
+
+```bash
+cd ~/MagicMirror/modules/MMM-Graphical-METAR-TAF
+git pull
+```
+
+## Notes
+
+- MagicMirror must have internet access to `aviationweather.gov`.
+- The module requires MagicMirror² 2.22 or newer.
+- Aviation weather is advisory. Use official briefing sources for operational decisions.

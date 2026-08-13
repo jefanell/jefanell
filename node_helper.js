@@ -36,6 +36,7 @@ module.exports = NodeHelper.create({
     const instance = {
       airport: this.station(payload.airport),
       interval: Math.max(60 * 1000, Number(payload.updateInterval) || 5 * 60 * 1000),
+      showTaf: payload.showTaf !== false,
       timer: null,
       latest: previous ? previous.latest : null,
     };
@@ -181,7 +182,7 @@ module.exports = NodeHelper.create({
       ]);
       const airport = this.airportInfo(airportRecord, instance.airport);
       if (!airport.runways.length) throw new Error(`No runway information was returned for ${instance.airport}`);
-      instance.latest = { identifier, metar, taf, airport, updatedAt: Date.now() };
+      instance.latest = { identifier, metar, taf, airport, updatedAt: Date.now(), webConfig: { showTaf: instance.showTaf } };
       this.sendSocketNotification("GMT_WEATHER", instance.latest);
     } catch (error) {
       this.sendSocketNotification("GMT_ERROR", { identifier, message: error instanceof Error ? error.message : "Unable to retrieve aviation weather." });

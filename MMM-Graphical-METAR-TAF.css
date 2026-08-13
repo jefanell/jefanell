@@ -187,3 +187,23 @@
 .gmt-forecast-crosswind>span { width:100%; padding:5px 6px; }
 .gmt-forecast-crosswind>span+span { border-top:2px solid currentColor; border-left:0; }
 @media(max-width:650px) { .gmt-taf>header{flex-wrap:wrap}.gmt-taf>header span{margin-left:auto}.gmt-forecast-crosswind{font-size:12px} }
+
+/* Rounded gradient cloud silhouettes inspired by the supplied icon. */
+.gmt-cloud-layer i, .gmt-forecast-clouds i {
+  position:relative;
+  z-index:0;
+  overflow:visible;
+  border-radius:999px 999px 48% 48%;
+  background:linear-gradient(100deg,#79d9f8 0%,#3baaf2 54%,#397eea 100%);
+  box-shadow:inset 0 -2px 3px rgba(17,68,145,.18),0 2px 5px rgba(0,0,0,.16);
+}
+.gmt-cloud-layer i::before, .gmt-forecast-clouds i::before,
+.gmt-cloud-layer i::after, .gmt-forecast-clouds i::after {
+  content:"";
+  position:absolute;
+  z-index:1;
+  border-radius:50%;
+  background:inherit;
+}
+.gmt-cloud-layer i::before, .gmt-forecast-clouds i::before { left:35%; bottom:30%; width:48%; height:150%; filter:brightness(1.02); }
+.gmt-cloud-layer i::after, .gmt-forecast-clouds i::after { left:10%; bottom:20%; width:39%; height:112%; filter:brightness(1.12); }

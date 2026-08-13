@@ -8,6 +8,9 @@ Module.register("MMM-Graphical-METAR-TAF", {
     showOfficialLinks: false,
     width: "1920px",
     height: "1080px",
+    webServerEnabled: true,
+    webServerAddress: "0.0.0.0",
+    webServerPort: 3000,
   },
 
   requiresVersion: "2.22.0",
@@ -153,6 +156,9 @@ Module.register("MMM-Graphical-METAR-TAF", {
       identifier: this.identifier,
       airport: this.station(this.config.airport),
       updateInterval: Math.max(60 * 1000, Number(this.config.updateInterval) || 5 * 60 * 1000),
+      webServerEnabled: this.config.webServerEnabled !== false,
+      webServerAddress: String(this.config.webServerAddress || "0.0.0.0"),
+      webServerPort: Number(this.config.webServerPort) || 3000,
     });
   },
 

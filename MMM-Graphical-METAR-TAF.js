@@ -312,7 +312,6 @@ Module.register("MMM-Graphical-METAR-TAF", {
         <div><span>Ceiling</span><strong>${ceiling ? `${Number(ceiling.base).toLocaleString()} ft` : "Unlimited"}</strong></div>
         <div><span>Weather</span><strong>${this.escape(this.weatherName(forecast.wxString))}</strong></div>
       </div>
-      <footer><span>Primary runway</span><strong>${this.escape(direction === null ? primary.id : end.name)}</strong>${forecast.fcstChange === "TEMPO" ? "<em>Temporary</em>" : ""}</footer>
     </article>`;
   },
 
@@ -340,6 +339,6 @@ Module.register("MMM-Graphical-METAR-TAF", {
         <article><strong>${(Number(metar.altim) / 33.8639).toFixed(2)} inHg</strong><span>Altimeter</span></article>
       </section>
       <section class="gmt-current"><header><div><span>Current METAR visualization</span><strong>${typeof metar.wdir === "number" ? `${metar.wdir}°` : "VRB"} at ${metar.wspd || 0}${metar.wgst ? `G${metar.wgst}` : ""} kt</strong></div><div><span>Visibility</span><strong>${this.escape(metar.visib)} mi</strong></div><div><span>Ceiling</span><strong>${ceiling ? `${Number(ceiling.base).toLocaleString()} ft` : "Unlimited"}</strong></div></header><div class="gmt-current-scene">${clouds}<div class="gmt-runway-grid">${runways.map((row) => this.runwayScene(row, direction, metar.wspd || 0, true)).join("")}</div></div></section>
-      ${this.config.showTaf !== false ? `<section class="gmt-taf"><header><div><h2>${this.escape(metar.icaoId)} forecast periods</h2><span>${taf ? `Issued ${this.time(taf.issueTime, true)} Z` : "No current TAF available"}</span></div>${officialLink}</header><div class="gmt-forecast-grid">${forecasts}</div></section>` : ""}`;
+      ${this.config.showTaf !== false ? `<section class="gmt-taf"><header><h2>${this.escape(metar.icaoId)} forecast periods</h2>${officialLink}<span>${taf ? `Issued ${this.time(taf.issueTime, true)} Z` : "No current TAF available"}</span></header><div class="gmt-forecast-grid">${forecasts}</div></section>` : ""}`;
   },
 });

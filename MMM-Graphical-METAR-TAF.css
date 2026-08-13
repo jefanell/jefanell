@@ -133,3 +133,10 @@
 .gmt-orientation { padding:10px 16px; border-radius:10px; font-size:30px; line-height:1; }
 .gmt-runway>b { font-size:37.5px; }
 @media(max-width:650px) { .gmt-current>header>div{gap:9px;padding:8px 10px}.gmt-current>header strong{font-size:26px}.gmt-orientation{padding:8px 12px;font-size:27px}.gmt-runway>b{font-size:27px} }
+
+/* High-priority operational labels remain legible after whole-page scaling. */
+.gmt-current>header span { font-size:16px; }
+.gmt-crosswind { padding:14px 20px; border-width:4px; border-radius:16px; font-size:30px; }
+.gmt-runway-view>footer { font-size:20px; font-weight:700; }
+.gmt-taf>header span { font-size:22px; }
+@media(max-width:650px) { .gmt-current>header span{font-size:16px}.gmt-crosswind{display:flex;padding:10px 12px;border-width:4px;border-radius:14px;font-size:24px}.gmt-runway-view>footer{display:block;font-size:20px}.gmt-taf>header span{font-size:22px} }

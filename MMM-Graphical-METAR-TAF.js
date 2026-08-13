@@ -6,6 +6,8 @@ Module.register("MMM-Graphical-METAR-TAF", {
     updateInterval: 5 * 60 * 1000,
     animationSpeed: 800,
     showOfficialLinks: false,
+    width: "1920px",
+    height: "1080px",
   },
 
   requiresVersion: "2.22.0",
@@ -28,6 +30,8 @@ Module.register("MMM-Graphical-METAR-TAF", {
   getDom() {
     const wrapper = document.createElement("div");
     wrapper.className = "graphical-metar-taf";
+    wrapper.style.width = this.dimension(this.config.width, "1920px");
+    wrapper.style.height = this.dimension(this.config.height, "1080px");
 
     if (this.error) {
       wrapper.innerHTML = `<div class="gmt-message"><strong>Weather unavailable</strong><span>${this.escape(this.error)}</span></div>`;
@@ -79,6 +83,12 @@ Module.register("MMM-Graphical-METAR-TAF", {
   station(value) {
     const id = String(value || "KPTK").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4);
     return /^[A-Z0-9]{3,4}$/.test(id) ? id : "KPTK";
+  },
+
+  dimension(value, fallback) {
+    if (typeof value === "number" && Number.isFinite(value) && value > 0) return `${value}px`;
+    const dimension = String(value == null ? "" : value).trim();
+    return /^\d+(?:\.\d+)?(?:px|%|vw|vh|rem|em)$/.test(dimension) ? dimension : fallback;
   },
 
   escape(value) {

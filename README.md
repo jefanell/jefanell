@@ -23,7 +23,9 @@ Add this entry to the `modules` array in `~/MagicMirror/config/config.js`:
     airport: "KPTK",
     updateInterval: 5 * 60 * 1000,
     animationSpeed: 800,
-    showOfficialLinks: false
+    showOfficialLinks: false,
+    width: "1920px",
+    height: "1080px"
   }
 }
 ```
@@ -36,6 +38,8 @@ Add this entry to the `modules` array in `~/MagicMirror/config/config.js`:
 | `updateInterval` | `300000` | Refresh interval in milliseconds; minimum one minute. |
 | `animationSpeed` | `800` | MagicMirror DOM update animation in milliseconds. |
 | `showOfficialLinks` | `false` | Show a link to the official TAF page. |
+| `width` | `"1920px"` | Exact dashboard width. Accepts a number of pixels or a CSS length such as `"80vw"` or `"100%"`. |
+| `height` | `"1080px"` | Exact dashboard height. Content outside this boundary is clipped. |
 
 The display includes current flight category, temperature, wind, visibility, ceiling, altimeter, runway-relative headwind/crosswind components, four-section windsocks, cloud layers, and graphical TAF periods. Parallel runways are consolidated into one orientation.
 

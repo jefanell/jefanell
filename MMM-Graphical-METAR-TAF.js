@@ -1,4 +1,4 @@
-Module.register("MMM-MetarRunway", {
+Module.register("MMM-Graphical-METAR-TAF", {
   defaults: {
     airport: "KPTK",
     appUrl: "http://localhost:3000/",
@@ -9,12 +9,12 @@ Module.register("MMM-MetarRunway", {
   requiresVersion: "2.22.0",
 
   getStyles: function () {
-    return ["MMM-MetarRunway.css"];
+    return ["MMM-Graphical-METAR-TAF.css"];
   },
 
   getDom: function () {
     const wrapper = document.createElement("div");
-    wrapper.className = "mmm-metar-runway-wrapper";
+    wrapper.className = "mmm-graphical-metar-taf-wrapper";
     wrapper.style.width = this.config.width;
     wrapper.style.height = this.config.height;
 
@@ -26,7 +26,7 @@ Module.register("MMM-MetarRunway", {
       .replace(/[^A-Z0-9]/g, "")
       .slice(0, 4);
 
-    frame.className = "mmm-metar-runway-frame";
+    frame.className = "mmm-graphical-metar-taf-frame";
     frame.src = `${baseUrl}/mirror?airport=${encodeURIComponent(airport || "KPTK")}`;
     frame.title = `${airport || "KPTK"} METAR and TAF runway weather`;
     frame.setAttribute("loading", "eager");

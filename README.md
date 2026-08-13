@@ -1,4 +1,4 @@
-# MMM-MetarRunway
+# MMM-Graphical-METAR-TAF
 
 A MagicMirror² wrapper for the graphical METAR/TAF runway dashboard. The module and local browser preview share the same web app, so visual and calculation changes never need to be duplicated.
 
@@ -8,7 +8,7 @@ Clone the module directly into the MagicMirror `modules` directory:
 
 ```bash
 cd ~/MagicMirror/modules
-git clone https://github.com/jefanell/jefanell.git MMM-MetarRunway
+git clone https://github.com/jefanell/jefanell.git MMM-Graphical-METAR-TAF
 ```
 
 Clone URL: [`https://github.com/jefanell/jefanell.git`](https://github.com/jefanell/jefanell.git)
@@ -16,7 +16,7 @@ Clone URL: [`https://github.com/jefanell/jefanell.git`](https://github.com/jefan
 To download future updates:
 
 ```bash
-cd ~/MagicMirror/modules/MMM-MetarRunway
+cd ~/MagicMirror/modules/MMM-Graphical-METAR-TAF
 git pull
 ```
 
@@ -28,7 +28,7 @@ Add this entry to the `modules` array in `~/MagicMirror/config/config.js`:
 
 ```js
 {
-  module: "MMM-MetarRunway",
+  module: "MMM-Graphical-METAR-TAF",
   position: "fullscreen_above",
   config: {
     airport: "KPTK",

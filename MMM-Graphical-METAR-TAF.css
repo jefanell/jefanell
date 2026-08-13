@@ -1,12 +1,12 @@
-.MMM-MetarRunway .module-content,
-.mmm-metar-runway-wrapper {
+.MMM-Graphical-METAR-TAF .module-content,
+.mmm-graphical-metar-taf-wrapper {
   margin: 0;
   padding: 0;
   overflow: hidden;
   background: #030303;
 }
 
-.mmm-metar-runway-frame {
+.mmm-graphical-metar-taf-frame {
   display: block;
   width: 100%;
   height: 100%;
